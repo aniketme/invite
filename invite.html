@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Engagement Invitation — Nidhi & Srijan</title>
+
+  <!-- IMPORTANT: To make WhatsApp (and other social apps) show a preview image when the page URL is shared,
+       you MUST replace the og:image URL below with a publicly accessible image URL (HTTPS).
+       Example: upload "E Card V2 copy.jpg" to Imgur/GitHub/GDrive (public) and paste that URL here. -->
+
+  <!-- Social preview meta (replace og:image with a public URL to make WhatsApp preview work) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Nidhi Ray & Srijan Sinha — Engagement Invitation" />
+  <meta property="og:description" content="Join us on 30th October, 5PM at Taj Taal Kutir, Royal Pavillion, New Town, Kolkata." />
+  <meta property="og:image" content="REPLACE_WITH_PUBLIC_URL_TO_ECARD_IMAGE.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <style>
+    :root{ --accent:#b3742a; --muted:#7a6b62; --bg:#fffaf6; font-family: 'Helvetica Neue', Arial, sans-serif;}
+    body{ margin:0; background:linear-gradient(180deg,#fffaf6 0%, #ffffff 40%); color:#3b3b3b; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+    .card{ width:100%; max-width:720px; background:white; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.12); overflow:hidden; text-align:center; }
+    .hero{ position:relative; }
+    .hero img{ width:100%; height:auto; display:block; }
+    .content{ padding:26px 28px 12px; }
+    h1{ margin:6px 0 4px; color:var(--accent); font-size:22px; letter-spacing:1px; }
+    p.lead{ margin:0 0 10px; color:var(--muted); font-weight:600; }
+    .meta{ font-size:14px; color:var(--muted); margin-bottom:18px; }
+    .map-btn{ display:inline-flex; gap:10px; align-items:center; padding:12px 18px; border-radius:8px; background:linear-gradient(180deg,var(--accent), #a8631f); color:white; text-decoration:none; font-weight:700; box-shadow:0 6px 18px rgba(163,110,49,0.22); }
+    .map-btn svg{ width:20px; height:20px; }
+    .actions{ margin-top:12px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+    .small{ font-size:12px; color:#666; margin-top:8px; }
+    .countdown{ background:linear-gradient(90deg, rgba(179,116,42,0.08), rgba(179,116,42,0.03)); padding:14px; margin-top:10px; border-top:1px solid rgba(180,140,110,0.08); }
+    .time-grid{ display:flex; justify-content:center; gap:14px; font-weight:700; color:var(--accent); align-items:center; }
+    .time-cell{ min-width:56px; padding:8px 10px; border-radius:8px; background:white; box-shadow:0 2px 6px rgba(0,0,0,0.06); }
+    footer.note{ font-size:12px; color:#7a6b62; padding:10px; }
+    @media (max-width:420px){ .time-grid{ gap:8px } .time-cell{ min-width:44px; padding:6px 8px } .map-btn{ padding:10px 14px } }
+  </style>
+</head>
+<body>
+  <div class="card" role="document">
+    <div class="hero">
+      <!-- Local image included (works when opened from this file locally or hosted together) -->
+      <img src="E Card V2 copy.jpg" alt="Engagement Invitation - Nidhi & Srijan">
+    </div>
+
+    <div class="content" role="main">
+      <h1>Nidhi Ray & Srijan Sinha</h1>
+      <p class="lead">You are cordially invited to the engagement ceremony</p>
+      <p class="meta"><strong>30th October, 5:00 PM onwards</strong><br/>Taj Taal Kutir — Royal Pavillion, New Town, Kolkata</p>
+
+      <div class="actions">
+        <!-- Primary map button. This opens the Google Maps link in-app or in the browser. -->
+        <a id="openMap" class="map-btn" href="https://maps.app.goo.gl/UYmvdAzmmoXwgPUX6" target="_blank" rel="noopener noreferrer">
+          <!-- SVG Pin Icon -->
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="white" stroke-width="1.2" fill="white" opacity="0.95"/>
+            <circle cx="12" cy="9" r="2.4" fill="#c07a22" />
+          </svg>
+          Open in Google Maps
+        </a>
+
+        <!-- Extra: open as geo: (some devices will open native maps apps) -->
+        <a id="openGeo" class="map-btn" href="#" title="Open in Maps app (if supported)">
+          Open in Maps App
+        </a>
+      </div>
+
+      <div class="small">Tip: On mobile, tapping <strong>Open in Google Maps</strong> should open the Google Maps app if installed.</div>
+
+      <div class="countdown" aria-live="polite">
+        <div class="small">Countdown to event</div>
+        <div class="time-grid" id="countdown">
+          <div class="time-cell"><div id="days">--</div><div style="font-size:11px;color:#8b7b6f">Days</div></div>
+          <div class="time-cell"><div id="hours">--</div><div style="font-size:11px;color:#8b7b6f">Hours</div></div>
+          <div class="time-cell"><div id="minutes">--</div><div style="font-size:11px;color:#8b7b6f">Minutes</div></div>
+          <div class="time-cell"><div id="seconds">--</div><div style="font-size:11px;color:#8b7b6f">Seconds</div></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="note">Share this invite link — when sharing on WhatsApp or other apps, to show the image preview you must host the invitation image publicly and update the page's <code>og:image</code> meta tag with that public image URL.</footer>
+  </div>
+
+<script>
+// ===== Countdown =====
+// Event: 30th October 2025 at 17:00 local time (Asia/Kolkata assumed)
+// If you want a different year/time, edit eventDate below.
+(function(){
+  // Use user's local timezone by creating a date with local components
+  const eventDate = new Date(2025, 9, 30, 17, 0, 0); // Month is 0-based: 9 = October
+  const daysEl = document.getElementById('days');
+  const hoursEl = document.getElementById('hours');
+  const minutesEl = document.getElementById('minutes');
+  const secondsEl = document.getElementById('seconds');
+
+  function update(){
+    const now = new Date();
+    let diff = Math.max(0, eventDate - now);
+    const days = Math.floor(diff / (1000*60*60*24));
+    diff -= days * (1000*60*60*24);
+    const hours = Math.floor(diff / (1000*60*60));
+    diff -= hours * (1000*60*60);
+    const minutes = Math.floor(diff / (1000*60));
+    diff -= minutes * (1000*60);
+    const seconds = Math.floor(diff / 1000);
+
+    daysEl.textContent = String(days).padStart(2,'0');
+    hoursEl.textContent = String(hours).padStart(2,'0');
+    minutesEl.textContent = String(minutes).padStart(2,'0');
+    secondsEl.textContent = String(seconds).padStart(2,'0');
+  }
+  update();
+  setInterval(update, 1000);
+})();
+
+// ===== Maps behavior =====
+// Primary link uses the provided Google Maps short link (works well on mobile).
+// Also provide a fallback that attempts to use geo: URI (may open Apple Maps on iOS or native Maps app).
+document.getElementById('openGeo').addEventListener('click', function(e){
+  e.preventDefault();
+  // Compose geo URI to open the coordinates — but we don't have exact coords in numeric form here.
+  // We'll try using the Google Maps link as a fallback.
+  const gLink = 'https://maps.app.goo.gl/UYmvdAzmmoXwgPUX6';
+  // Try geo: with a query (some systems accept textual queries)
+  const placeQuery = encodeURIComponent('Taj Taal Kutir, Royal Pavillion, New Town, Kolkata');
+  const geoUri = 'geo:0,0?q=' + placeQuery;
+  // Try opening geo: first (works on many Android devices), then fallback to gLink
+  const win = window.open(geoUri, '_self');
+  // In many browsers window.open will return null; just open the Google Maps link in a new tab/window
+  setTimeout(function(){ window.open(gLink, '_blank', 'noopener'); }, 400);
+});
+
+// ===== Extra: when page is opened on desktop and user wants to share quickly =====
+// Copy the current page URL to clipboard for quick sharing
+// (Useful when you host this HTML and want to share the link)
+function copyPageLink(){
+  navigator.clipboard && navigator.clipboard.writeText(location.href).then(()=>{
+    alert('Invite link copied to clipboard — paste in WhatsApp or email.');
+  }).catch(()=>{
+    prompt('Copy this URL:', location.href);
+  });
+}
+
+// Optionally let users tap the image to save it (mobile browsers support long-press to save) -- no extra code required.
+</script>
+</body>
+</html>
