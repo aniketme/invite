@@ -1,232 +1,203 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Nidhi & Srijan – Engagement Invitation</title>
 
   <!-- ✅ Social / WhatsApp Preview -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Nidhi Ray & Srijan Sinha — Engagement Invitation" />
-  <meta property="og:description" content="Join us on 30th October, 5 PM onwards at Taj Taal Kutir, Royal Pavillion, New Town, Kolkata." />
-  <meta property="og:image" content="https://aniketme.github.io/invite/card.jpg" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="theme-color" content="#b3742a" />
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Nidhi Ray & Srijan Sinha — Engagement Invitation"/>
+  <meta property="og:description" content="Join us on 30th October, 5 PM onwards at Taj Taal Kutir, Royal Pavillion, New Town, Kolkata."/>
+  <meta property="og:image" content="https://aniketme.github.io/invite/card.jpg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
 
   <style>
     :root {
-      --accent: #b3742a;
-      --muted: #7a6b62;
-      --bg: #fffaf6;
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --accent:#b3742a;
+      --muted:#7a6b62;
+      font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;
     }
-    body {
-      margin: 0;
-      background: linear-gradient(180deg,#fffaf6,#ffffff 60%);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      padding: 18px;
-      overflow-x: hidden;
+    html,body {margin:0;height:100%;overflow:hidden;background:#fffaf6;}
+    .hidden {display:none;}
+    /* --- Tap to reveal overlay --- */
+    #overlay {
+      position:fixed;inset:0;
+      background:radial-gradient(circle at center,#fff4e5 0%,#ffe5c4 100%);
+      display:flex;flex-direction:column;justify-content:center;align-items:center;
+      text-align:center;z-index:1000;
+      animation:fadeIn 1.5s ease forwards;
     }
-    .fade-in { 
-      opacity: 0;
-      animation: fadeIn 1.5s ease-in-out forwards;
+    #overlay h2 {
+      color:var(--accent);font-size:22px;margin-bottom:10px;
+      animation:pulse 2s infinite;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    #overlay button {
+      background:var(--accent);color:white;border:none;border-radius:30px;
+      padding:12px 24px;font-size:16px;cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,.2);
+    }
+    #overlay button:hover {transform:scale(1.05);}
+    /* --- Fade & glow animations --- */
+    @keyframes fadeIn {from{opacity:0}to{opacity:1}}
+    @keyframes pulse {0%,100%{opacity:.8}50%{opacity:1}}
+    @keyframes floatPetal {
+      0%{transform:translateY(-10vh) rotate(0deg);}
+      100%{transform:translateY(110vh) rotate(360deg);}
+    }
+    /* --- Petal layer --- */
+    #petal-layer {
+      position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10;
+    }
+    .petal {
+      position:absolute;width:20px;height:20px;
+      background:radial-gradient(circle,#ffb6c1 0%,#ff6f91 70%);
+      border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+      opacity:0.7;animation:floatPetal linear infinite;
+    }
+    /* --- Card --- */
+    #main {
+      position:relative;z-index:50;width:100%;height:100%;
+      display:flex;justify-content:center;align-items:center;overflow:auto;
     }
     .card {
-      width: 100%;
-      max-width: 720px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.15);
-      overflow: hidden;
-      text-align: center;
+      max-width:720px;background:white;border-radius:16px;
+      box-shadow:0 8px 25px rgba(0,0,0,.15);
+      text-align:center;overflow:hidden;animation:fadeIn 1.5s ease forwards;
     }
-    .hero img {
-      width: 100%;
-      height: auto;
-      display: block;
-      animation: fadeIn 2s ease-in-out forwards;
-    }
-    .content {
-      padding: 24px;
-    }
-    h1 {
-      color: var(--accent);
-      font-size: 24px;
-      margin: 12px 0 8px;
+    .hero img {width:100%;height:auto;display:block;}
+    .couple {
+      color:var(--accent);font-size:26px;font-weight:600;
+      margin-top:16px;text-shadow:0 0 12px rgba(179,116,42,.5);
+      animation:fadeIn 2s ease-in-out 1s forwards;
     }
     .meta {
-      color: var(--muted);
-      font-weight: 500;
-      margin-bottom: 20px;
-      animation-delay: 0.3s;
+      color:var(--muted);font-weight:500;margin:8px 0 16px;
+      animation:fadeIn 2s ease-in-out 1.5s forwards;
     }
     .map-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(180deg, #b3742a, #9a5f1f);
-      color: white;
-      font-weight: 600;
-      text-decoration: none;
-      padding: 12px 18px;
-      border-radius: 8px;
-      box-shadow: 0 5px 16px rgba(179, 116, 42, 0.3);
-      transition: transform 0.25s ease;
-      animation-delay: 0.4s;
+      display:inline-block;background:linear-gradient(180deg,#b3742a,#9a5f1f);
+      color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;
+      font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.25);
+      transition:transform .25s;
     }
-    .map-btn:hover { transform: scale(1.05); }
+    .map-btn:hover{transform:scale(1.05);}
     .countdown {
-      margin-top: 22px;
-      background: #f9f5f0;
-      padding: 14px;
-      border-top: 1px solid #e6d8c5;
-      animation-delay: 0.6s;
+      margin:22px auto 12px;padding:12px;
+      background:#f9f5f0;border-radius:10px;width:fit-content;
+      animation:glow 2s infinite alternate;
     }
-    .time-grid {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
+    @keyframes glow {
+      from{box-shadow:0 0 6px rgba(179,116,42,.3);}
+      to{box-shadow:0 0 18px rgba(179,116,42,.6);}
     }
+    .time-grid {display:flex;gap:12px;}
     .time-cell {
-      min-width: 55px;
-      padding: 8px 10px;
-      border-radius: 8px;
-      background: white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      color: var(--accent);
-      font-weight: bold;
+      min-width:60px;padding:8px;border-radius:8px;background:white;
+      box-shadow:0 2px 6px rgba(0,0,0,.1);color:var(--accent);font-weight:700;
     }
-    .label {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: normal;
+    .label {font-size:11px;color:var(--muted);}
+    footer {font-size:12px;color:var(--muted);padding:8px;}
+    /* --- Music toggle --- */
+    #musicBtn {
+      position:fixed;bottom:16px;right:16px;z-index:999;
+      background:var(--accent);color:white;border:none;
+      width:48px;height:48px;border-radius:50%;font-size:20px;
+      box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;
+      transition:transform .25s;
     }
-    footer {
-      font-size: 12px;
-      color: var(--muted);
-      padding: 12px;
-      text-align: center;
-    }
-    .music-toggle {
-      position: fixed;
-      bottom: 16px;
-      right: 18px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 46px;
-      height: 46px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-      cursor: pointer;
-      font-size: 20px;
-    }
+    #musicBtn:hover{transform:scale(1.1);}
   </style>
 </head>
 
 <body>
-  <div class="card fade-in">
-    <div class="hero">
-      <img src="card.jpg" alt="Engagement Invitation - Nidhi & Srijan">
-    </div>
-
-    <div class="content fade-in">
-      <h1>Nidhi Ray & Srijan Sinha</h1>
-      <div class="meta">
-        30th October 2025, 5:00 PM onwards<br>
-        Taj Taal Kutir — Royal Pavillion, New Town, Kolkata
-      </div>
-
-      <a class="map-btn" href="https://maps.app.goo.gl/UYmvdAzmmoXwgPUX6" target="_blank" rel="noopener">
-        📍 Open in Google Maps
-      </a>
-
-      <div class="countdown fade-in">
-        <div>⏰ Countdown to Event</div>
-        <div class="time-grid">
-          <div class="time-cell">
-            <div id="days">--</div><div class="label">Days</div>
-          </div>
-          <div class="time-cell">
-            <div id="hours">--</div><div class="label">Hours</div>
-          </div>
-          <div class="time-cell">
-            <div id="minutes">--</div><div class="label">Minutes</div>
-          </div>
-          <div class="time-cell">
-            <div id="seconds">--</div><div class="label">Seconds</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <footer>
-      Share this invite link with your loved ones 💖  
-      <br>When shared on WhatsApp, the card image will appear as preview.
-    </footer>
+  <!-- Tap-to-reveal overlay -->
+  <div id="overlay">
+    <h2>✨ Tap to Reveal the Invitation ✨</h2>
+    <button id="revealBtn">Open Invitation</button>
   </div>
 
-  <!-- 🎵 Background Music (auto-plays quietly) -->
-  <audio id="bgmusic" src="music.mp3" autoplay loop preload="auto"></audio>
-  <button class="music-toggle" id="musicBtn" title="Toggle Music">🔊</button>
+  <!-- Floating petals -->
+  <div id="petal-layer"></div>
+
+  <!-- Main content -->
+  <div id="main" class="hidden">
+    <div class="card">
+      <div class="hero"><img src="card.jpg" alt="Engagement Invitation"></div>
+      <div class="couple">💍 Nidhi Ray & Srijan Sinha 💍</div>
+      <div class="meta">30 Oct 2025 · 5 PM onwards<br>Taj Taal Kutir — Royal Pavillion, New Town, Kolkata</div>
+      <a class="map-btn" href="https://maps.app.goo.gl/UYmvdAzmmoXwgPUX6" target="_blank">📍 Open in Google Maps</a>
+      <div class="countdown">
+        <div class="time-grid">
+          <div class="time-cell"><div id="days">--</div><div class="label">Days</div></div>
+          <div class="time-cell"><div id="hours">--</div><div class="label">Hours</div></div>
+          <div class="time-cell"><div id="minutes">--</div><div class="label">Minutes</div></div>
+          <div class="time-cell"><div id="seconds">--</div><div class="label">Seconds</div></div>
+        </div>
+      </div>
+      <footer>We can’t wait to celebrate with you 💖</footer>
+    </div>
+  </div>
+
+  <!-- Background music -->
+  <audio id="bgmusic" src="bgmusic.mp3" loop preload="auto"></audio>
+  <button id="musicBtn" title="Toggle Music">🔊</button>
 
   <script>
-    // Countdown timer
-    const eventDate = new Date(2025, 9, 30, 17, 0, 0);
-    const d = document;
-    const daysEl = d.getElementById('days');
-    const hoursEl = d.getElementById('hours');
-    const minutesEl = d.getElementById('minutes');
-    const secondsEl = d.getElementById('seconds');
+    const overlay=document.getElementById('overlay');
+    const main=document.getElementById('main');
+    const music=document.getElementById('bgmusic');
+    const btn=document.getElementById('musicBtn');
+    let musicOn=false;
 
-    function updateCountdown() {
-      const now = new Date();
-      const diff = eventDate - now;
-      if (diff <= 0) {
-        document.querySelector('.countdown').innerHTML = "<strong>🎉 The event has started!</strong>";
-        return;
+    document.getElementById('revealBtn').addEventListener('click',()=>{
+      overlay.style.display='none';
+      main.classList.remove('hidden');
+      createPetals();
+      music.play().catch(()=>{});
+      musicOn=true;
+    });
+
+    btn.addEventListener('click',()=>{
+      if(musicOn){music.pause();btn.textContent='🔈';}
+      else{music.play().catch(()=>{});btn.textContent='🔊';}
+      musicOn=!musicOn;
+    });
+
+    function createPetals(){
+      const layer=document.getElementById('petal-layer');
+      for(let i=0;i<15;i++){
+        const p=document.createElement('div');
+        p.className='petal';
+        p.style.left=Math.random()*100+'vw';
+        p.style.animationDuration=(8+Math.random()*6)+'s';
+        p.style.animationDelay=(Math.random()*5)+'s';
+        layer.appendChild(p);
       }
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
-      daysEl.textContent = days.toString().padStart(2, '0');
-      hoursEl.textContent = hours.toString().padStart(2, '0');
-      minutesEl.textContent = minutes.toString().padStart(2, '0');
-      secondsEl.textContent = seconds.toString().padStart(2, '0');
+    }
+
+    // Countdown
+    const eventDate=new Date(2025,9,30,17,0,0);
+    const daysEl=document.getElementById('days');
+    const hoursEl=document.getElementById('hours');
+    const minutesEl=document.getElementById('minutes');
+    const secondsEl=document.getElementById('seconds');
+
+    function updateCountdown(){
+      const now=new Date();
+      const diff=eventDate-now;
+      if(diff<=0){document.querySelector('.countdown').innerHTML='<b>🎉 The event has begun!</b>';return;}
+      const d=Math.floor(diff/86400000);
+      const h=Math.floor(diff/3600000)%24;
+      const m=Math.floor(diff/60000)%60;
+      const s=Math.floor(diff/1000)%60;
+      daysEl.textContent=d.toString().padStart(2,'0');
+      hoursEl.textContent=h.toString().padStart(2,'0');
+      minutesEl.textContent=m.toString().padStart(2,'0');
+      secondsEl.textContent=s.toString().padStart(2,'0');
     }
     updateCountdown();
-    setInterval(updateCountdown, 1000);
-
-    // Music controls
-    const music = d.getElementById('bgmusic');
-    const btn = d.getElementById('musicBtn');
-    music.volume = 0.3; // soft volume
-
-    // Auto-play fix for mobile: play on first user interaction
-    function ensurePlay() {
-      music.play().catch(()=>{});
-      d.removeEventListener('click', ensurePlay);
-    }
-    d.addEventListener('click', ensurePlay);
-
-    btn.addEventListener('click', () => {
-      if (music.paused) {
-        music.play();
-        btn.textContent = '🔊';
-      } else {
-        music.pause();
-        btn.textContent = '🔈';
-      }
-    });
+    setInterval(updateCountdown,1000);
   </script>
 </body>
 </html>
