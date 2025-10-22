@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Nidhi & Srijan – Engagement Invitation</title>
 
-  <!-- 🔹 Social Media / WhatsApp Preview -->
+  <!-- ✅ Social / WhatsApp Preview -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Nidhi Ray & Srijan Sinha — Engagement Invitation" />
   <meta property="og:description" content="Join us on 30th October, 5 PM onwards at Taj Taal Kutir, Royal Pavillion, New Town, Kolkata." />
@@ -22,19 +22,28 @@
     }
     body {
       margin: 0;
-      background: var(--bg);
+      background: linear-gradient(180deg,#fffaf6,#ffffff 60%);
       display: flex;
       justify-content: center;
       align-items: flex-start;
       min-height: 100vh;
-      padding: 16px;
+      padding: 18px;
+      overflow-x: hidden;
+    }
+    .fade-in { 
+      opacity: 0;
+      animation: fadeIn 1.5s ease-in-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .card {
       width: 100%;
       max-width: 720px;
       background: white;
-      border-radius: 14px;
-      box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+      border-radius: 16px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.15);
       overflow: hidden;
       text-align: center;
     }
@@ -42,6 +51,7 @@
       width: 100%;
       height: auto;
       display: block;
+      animation: fadeIn 2s ease-in-out forwards;
     }
     .content {
       padding: 24px;
@@ -49,12 +59,13 @@
     h1 {
       color: var(--accent);
       font-size: 24px;
-      margin: 10px 0 6px;
+      margin: 12px 0 8px;
     }
     .meta {
       color: var(--muted);
       font-weight: 500;
       margin-bottom: 20px;
+      animation-delay: 0.3s;
     }
     .map-btn {
       display: inline-flex;
@@ -67,19 +78,22 @@
       padding: 12px 18px;
       border-radius: 8px;
       box-shadow: 0 5px 16px rgba(179, 116, 42, 0.3);
-      transition: transform 0.2s;
+      transition: transform 0.25s ease;
+      animation-delay: 0.4s;
     }
-    .map-btn:hover { transform: scale(1.04); }
+    .map-btn:hover { transform: scale(1.05); }
     .countdown {
       margin-top: 22px;
       background: #f9f5f0;
       padding: 14px;
       border-top: 1px solid #e6d8c5;
+      animation-delay: 0.6s;
     }
     .time-grid {
       display: flex;
       justify-content: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
     .time-cell {
       min-width: 55px;
@@ -101,16 +115,30 @@
       padding: 12px;
       text-align: center;
     }
+    .music-toggle {
+      position: fixed;
+      bottom: 16px;
+      right: 18px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+      cursor: pointer;
+      font-size: 20px;
+    }
   </style>
 </head>
 
 <body>
-  <div class="card">
+  <div class="card fade-in">
     <div class="hero">
       <img src="card.jpg" alt="Engagement Invitation - Nidhi & Srijan">
     </div>
 
-    <div class="content">
+    <div class="content fade-in">
       <h1>Nidhi Ray & Srijan Sinha</h1>
       <div class="meta">
         30th October 2025, 5:00 PM onwards<br>
@@ -121,7 +149,7 @@
         📍 Open in Google Maps
       </a>
 
-      <div class="countdown">
+      <div class="countdown fade-in">
         <div>⏰ Countdown to Event</div>
         <div class="time-grid">
           <div class="time-cell">
@@ -141,40 +169,64 @@
     </div>
 
     <footer>
-      Share this link on WhatsApp to invite your guests — the preview image will appear automatically.
+      Share this invite link with your loved ones 💖  
+      <br>When shared on WhatsApp, the card image will appear as preview.
     </footer>
   </div>
 
+  <!-- 🎵 Background Music (auto-plays quietly) -->
+  <audio id="bgmusic" src="music.mp3" autoplay loop preload="auto"></audio>
+  <button class="music-toggle" id="musicBtn" title="Toggle Music">🔊</button>
+
   <script>
-    // Countdown timer to 30th October 2025, 5:00 PM
-    const eventDate = new Date(2025, 9, 30, 17, 0, 0); // month is 0-based: 9 = October
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
+    // Countdown timer
+    const eventDate = new Date(2025, 9, 30, 17, 0, 0);
+    const d = document;
+    const daysEl = d.getElementById('days');
+    const hoursEl = d.getElementById('hours');
+    const minutesEl = d.getElementById('minutes');
+    const secondsEl = d.getElementById('seconds');
 
     function updateCountdown() {
       const now = new Date();
       const diff = eventDate - now;
-
       if (diff <= 0) {
         document.querySelector('.countdown').innerHTML = "<strong>🎉 The event has started!</strong>";
         return;
       }
-
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((diff / (1000 * 60)) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
-
-      daysEl.textContent = String(days).padStart(2, '0');
-      hoursEl.textContent = String(hours).padStart(2, '0');
-      minutesEl.textContent = String(minutes).padStart(2, '0');
-      secondsEl.textContent = String(seconds).padStart(2, '0');
+      daysEl.textContent = days.toString().padStart(2, '0');
+      hoursEl.textContent = hours.toString().padStart(2, '0');
+      minutesEl.textContent = minutes.toString().padStart(2, '0');
+      secondsEl.textContent = seconds.toString().padStart(2, '0');
     }
-
     updateCountdown();
     setInterval(updateCountdown, 1000);
+
+    // Music controls
+    const music = d.getElementById('bgmusic');
+    const btn = d.getElementById('musicBtn');
+    music.volume = 0.3; // soft volume
+
+    // Auto-play fix for mobile: play on first user interaction
+    function ensurePlay() {
+      music.play().catch(()=>{});
+      d.removeEventListener('click', ensurePlay);
+    }
+    d.addEventListener('click', ensurePlay);
+
+    btn.addEventListener('click', () => {
+      if (music.paused) {
+        music.play();
+        btn.textContent = '🔊';
+      } else {
+        music.pause();
+        btn.textContent = '🔈';
+      }
+    });
   </script>
 </body>
 </html>
