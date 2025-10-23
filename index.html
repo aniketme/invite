@@ -51,8 +51,15 @@
 
     /* petal layer on top of card */
     #petalLayer{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:22}
-    .petal{position:absolute;width:18px;height:18px;background:radial-gradient(circle,#ffb6c1 0%,#ff6f91 70%);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;opacity:.85;will-change:transform,opacity}
-    @keyframes petalFloat { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-140vh) rotate(360deg);opacity:0} }
+    .petal{
+      position:absolute;
+      width:18px;height:18px;
+      background:radial-gradient(circle,#ffd1dc 0%,#ff8aa1 70%);
+      border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+      opacity:.85;will-change:transform,opacity;
+      transform-origin:center;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08));
+    }
 
     /* music toggle */
     #musicBtn{position:fixed;bottom:16px;right:16px;z-index:999;background:var(--accent);color:white;border:none;width:48px;height:48px;border-radius:50%;font-size:20px;box-shadow:0 6px 20px rgba(0,0,0,.18);cursor:pointer}
@@ -110,8 +117,8 @@
   <div id="celebrateMsg">🎉 The celebration has begun! See you at the venue 🎉</div>
 
   <script>
-  // ---------- countdown ----------
-  const eventDate = new Date(2025, 9, 30, 17, 0, 0);
+  /***** COUNTDOWN *****/
+  const eventDate = new Date(2025, 9, 30, 15, 0, 0);
   const daysEl = document.getElementById('days');
   const hoursEl = document.getElementById('hours');
   const minutesEl = document.getElementById('minutes');
@@ -137,20 +144,22 @@
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // ---------- audio / vibration / fade-in ----------
+
+  /***** AUDIO: fade in + auto-stop after 20s (keeps toggle) *****/
   const music = document.getElementById('bgmusic');
   const musicBtn = document.getElementById('musicBtn');
   let fadeTimer = null;
+  let musicAutoStopTimer = null;
   let musicOn = false;
-  music.volume = 0.05; // start very low
 
-  // attempt autoplay immediately (desktop may allow)
+  music.volume = 0.03; // very low start
+
+  // try autoplay
   music.play().then(()=> {
-    // fade to target if play succeeded
     fadeInAudio(0.4, 2000);
-    musicOn = true;
-    musicBtn.textContent = '🔊';
-  }).catch(()=>{ /* ignore - will wait for user interaction */ });
+    scheduleAutoStop();
+    musicOn = true; musicBtn.textContent = '🔊';
+  }).catch(()=>{/* will wait for interaction */});
 
   function fadeInAudio(targetVol = 0.4, duration = 2000) {
     clearInterval(fadeTimer);
@@ -158,9 +167,9 @@
     const stepTime = duration / steps;
     const volInc = (targetVol - music.volume) / steps;
     let count = 0;
-    fadeTimer = setInterval(() => {
+    fadeTimer = setInterval(()=> {
       music.volume = Math.min(targetVol, music.volume + volInc);
-      if (++count >= steps) clearInterval(fadeTimer);
+      if(++count >= steps) clearInterval(fadeTimer);
     }, stepTime);
   }
   function fadeOutAndPause(duration = 500) {
@@ -169,25 +178,29 @@
     const stepTime = duration / steps;
     const volDec = music.volume / steps;
     let count = 0;
-    fadeTimer = setInterval(() => {
+    fadeTimer = setInterval(()=> {
       music.volume = Math.max(0, music.volume - volDec);
-      if (++count >= steps) {
-        clearInterval(fadeTimer);
-        try { music.pause(); } catch(e){}
-      }
+      if(++count >= steps) { clearInterval(fadeTimer); try{ music.pause(); }catch(e){} }
     }, stepTime);
   }
-  function softVibrate() {
-    if('vibrate' in navigator) navigator.vibrate([60,30,60]);
+
+  function scheduleAutoStop() {
+    clearTimeout(musicAutoStopTimer);
+    musicAutoStopTimer = setTimeout(()=> {
+      if(!music.paused) {
+        fadeOutAndPause(900);
+        musicOn = false; musicBtn.textContent = '🔈';
+      }
+    }, 20000);
   }
 
-  // fallback: start music on first interaction (mobile)
-  function startMusicOnFirstInteraction() {
+  // start music on first interaction (mobile)
+  function startMusicOnFirstInteraction(){
     music.play().then(()=> {
-      fadeInAudio(0.4, 2000);
-      softVibrate();
-      musicOn = true;
-      musicBtn.textContent = '🔊';
+      fadeInAudio(0.4,2000);
+      scheduleAutoStop();
+      if('vibrate' in navigator) navigator.vibrate([60,30,60]);
+      musicOn = true; musicBtn.textContent = '🔊';
     }).catch(()=>{});
     document.removeEventListener('click', startMusicOnFirstInteraction);
     document.removeEventListener('touchstart', startMusicOnFirstInteraction);
@@ -196,92 +209,136 @@
   document.addEventListener('touchstart', startMusicOnFirstInteraction, {passive:true});
 
   // manual toggle
-  musicBtn.addEventListener('click', () => {
-    if (music.paused) {
-      music.play().then(()=> {
-        fadeInAudio(0.4,1500);
-        softVibrate();
-        musicOn = true;
-        musicBtn.textContent = '🔊';
-      }).catch(()=>{});
+  musicBtn.addEventListener('click', ()=> {
+    if(music.paused){
+      music.play().then(()=> { fadeInAudio(0.4,1500); scheduleAutoStop(); if('vibrate' in navigator) navigator.vibrate(30); musicOn = true; musicBtn.textContent='🔊'; }).catch(()=>{});
     } else {
-      fadeOutAndPause(600);
-      musicOn = false;
-      musicBtn.textContent = '🔈';
+      clearTimeout(musicAutoStopTimer);
+      fadeOutAndPause(600); musicOn = false; musicBtn.textContent='🔈';
     }
   });
 
-  // ---------- petals: ambient + touch bursts ----------
+
+  /***** PETALS: downward slow fall with gentle sway, controlled spawn rate *****/
   const petalLayer = document.getElementById('petalLayer');
+  let currentPetals = 0;
+  const MAX_PETALS = 45;
+  const AMBIENT_MIN_MS = 1000; // min spawn interval (1s)
+  const AMBIENT_MAX_MS = 2000; // max spawn interval (2s)
+  let ambientSpawnActive = false;
+  let ambientSpawnTimer = null;
+
+  function rand(min,max){ return min + Math.random()*(max-min); }
 
   function createPetalAt(x, y, opts = {}) {
+    if(currentPetals >= MAX_PETALS) return null;
     const p = document.createElement('div');
     p.className = 'petal';
-    const size = (opts.size || (10 + Math.random()*22));
+    const size = opts.size || rand(10,22);
     p.style.width = size + 'px';
     p.style.height = (size * 0.85) + 'px';
     p.style.left = (x - size/2) + 'px';
     p.style.top = (y - size/2) + 'px';
-    p.style.opacity = (0.6 + Math.random()*0.4);
-    const dur = (5 + Math.random()*6);
-    p.style.animationDuration = dur + 's';
-    // initial rotation
-    const rot = Math.random()*360;
-    p.style.transform = `rotate(${rot}deg)`;
+    p.style.opacity = (0.5 + Math.random()*0.45);
+
+    // slow durations: 18 - 30 seconds (in ms)
+    const dur = Math.floor(rand(18000,30000));
+    // gentle horizontal sway drift
+    const drift = rand(-140, 140); // px total drift across fall
+    const rotateStart = rand(-40,40);
+    const rotateEnd = rotateStart + rand(200,480);
+
+    // append
     petalLayer.appendChild(p);
+    currentPetals++;
 
-    // animate transform X drift + Y translate using Web Animations API for smooth perf
-    const drift = (Math.random() - 0.5) * 140; // px horizontal drift
+    // animate using WAAPI for smoothness
     p.animate([
-      { transform: `rotate(${rot}deg) translateY(0px) translateX(0px)`, opacity:1 },
-      { transform: `rotate(${rot + 360}deg) translateY(-140vh) translateX(${drift}px)`, opacity:0 }
-    ], { duration: dur * 1000, easing: 'cubic-bezier(.2,.8,.2,1)', iterations: 1, fill: 'forwards' });
+      { transform: `rotate(${rotateStart}deg) translateX(0px) translateY(0px)`, opacity: 1 },
+      // mid point slightly to left or right for sway
+      { offset: 0.5, transform: `rotate(${(rotateStart + rotateEnd)/2}deg) translateX(${drift*0.45}px) translateY(${window.innerHeight*0.45}px)`, opacity: 0.95 },
+      // final near bottom (translateY relative to card height + some)
+      { transform: `rotate(${rotateEnd}deg) translateX(${drift}px) translateY(${Math.max(window.innerHeight, 800)}px)`, opacity: 0 }
+    ], {
+      duration: dur,
+      easing: 'cubic-bezier(.2,.8,.2,1)',
+      iterations: 1,
+      fill: 'forwards'
+    });
 
-    setTimeout(()=> { try{ p.remove(); } catch(e){} }, dur*1000 + 800);
+    // cleanup after animation
+    setTimeout(()=> {
+      try{ p.remove(); currentPetals = Math.max(0, currentPetals-1); } catch(e){}
+    }, dur + 700);
+
     return p;
   }
 
-  // ambient petals spawn from bottom area of card and float up
-  let ambientInterval = null;
-  function spawnAmbientPetalsLoop() {
-    if (ambientInterval) return;
-    ambientInterval = setInterval(()=> {
-      try {
-        const rect = petalLayer.getBoundingClientRect();
-        const x = Math.random() * rect.width;
-        const y = rect.height + 12;
-        createPetalAt(x, y);
-      } catch(e) {}
-    }, 1400);
-    // optional auto-stop after long period
-    setTimeout(()=> { clearInterval(ambientInterval); ambientInterval = null; }, 1000 * 60 * 60); // stop after 1 hour
+  function spawnAmbientOnce(){
+    if(!petalLayer) return;
+    if(currentPetals >= MAX_PETALS) {
+      // schedule next check a bit later to avoid starving
+      ambientSpawnTimer = setTimeout(spawnAmbientOnce, rand(800,1400));
+      return;
+    }
+    try {
+      const rect = petalLayer.getBoundingClientRect();
+      // spawn from random x across top area, y slightly above visible area
+      const x = rand(8, rect.width - 8);
+      const y = rand(-40, -8); // start above card
+      createPetalAt(x, y);
+    } catch(e){}
+    const next = Math.floor(rand(AMBIENT_MIN_MS, AMBIENT_MAX_MS));
+    ambientSpawnTimer = setTimeout(spawnAmbientOnce, next);
   }
 
-  // burst petals at pointer location
-  function burstPetalsAt(pageX, pageY) {
+  function spawnAmbientPetalsStart(){
+    if(ambientSpawnActive) return;
+    ambientSpawnActive = true;
+    spawnAmbientOnce();
+  }
+  function stopAmbientPetals(){
+    clearTimeout(ambientSpawnTimer);
+    ambientSpawnActive = false;
+  }
+
+  // user burst
+  function burstPetalsAt(pageX, pageY){
     if('vibrate' in navigator) navigator.vibrate(20);
     const rect = petalLayer.getBoundingClientRect();
     const x = pageX - rect.left;
     const y = pageY - rect.top;
-    for(let i=0;i<12;i++){
-      const rx = x + (Math.random()-0.5)*120;
-      const ry = y + (Math.random()-0.5)*80;
-      createPetalAt(rx, ry, { size: 8 + Math.random()*20 });
+    // create 8-12 petals but respect MAX_PETALS
+    const count = Math.min(12, Math.max(6, Math.floor(rand(8,12))));
+    for(let i=0;i<count;i++){
+      const rx = x + rand(-60,60);
+      const ry = y + rand(-30,30);
+      createPetalAt(rx, ry, { size: rand(8,20) });
     }
   }
 
+  // attach handlers
   const card = document.getElementById('card');
-  card.addEventListener('click', (ev)=> {
+  card.addEventListener('click', (ev)=>{
     if(ev.target.closest('a')) return;
     burstPetalsAt(ev.pageX, ev.pageY);
   });
-  card.addEventListener('touchstart', (ev)=> {
+  card.addEventListener('touchstart', (ev)=>{
     if(ev.target.closest('a')) return;
     const t = ev.touches[0];
     burstPetalsAt(t.pageX, t.pageY);
   }, {passive:true});
 
-  // ---------- confetti celebration ----------
+  // start ambient on load
+  window.addEventListener('load', ()=> {
+    document.getElementById('main').style.opacity = '1';
+    spawnAmbientPetalsStart();
+    // if already past event, trigger celebration
+    if(new Date() >= eventDate) triggerCelebration();
+  });
+
+
+  /***** CONFETTI RAIN CELEBRATION (no fireworks) *****/
   const confettiCanvas = document.getElementById('confettiCanvas');
   const celebrateMsg = document.getElementById('celebrateMsg');
 
@@ -299,18 +356,18 @@
 
     const colors = ['#ff4d6d','#ffd166','#90e0ef','#d5f7e3','#ffd6a5','#b3742a'];
     const particles = [];
-    const num = Math.min(250, Math.floor(window.innerWidth/3));
+    const num = Math.min(280, Math.floor(window.innerWidth/3));
     for(let i=0;i<num;i++){
       particles.push({
         x: Math.random()*window.innerWidth,
-        y: -20 - Math.random()*200,
+        y: -20 - Math.random()*400,
         vx: (Math.random()-0.5)*8,
         vy: (2 + Math.random()*6),
         size: 6 + Math.random()*10,
         angle: Math.random()*360,
         angularVel: (Math.random()-0.5)*0.2,
         color: colors[Math.floor(Math.random()*colors.length)],
-        ttl: 400 + Math.random()*200
+        ttl: 400 + Math.random()*400
       });
     }
     let last = performance.now();
@@ -332,9 +389,8 @@
         ctx.restore();
       }
       const alive = particles.filter(p => p.ttl > 0 && p.y < window.innerHeight + 100);
-      if(alive.length > 0){
-        requestAnimationFrame(frame);
-      } else {
+      if(alive.length > 0) requestAnimationFrame(frame);
+      else {
         setTimeout(()=> {
           ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
           confettiCanvas.style.display = 'none';
@@ -344,9 +400,7 @@
       }
     }
     requestAnimationFrame(frame);
-    // small vibration on celebration
     if('vibrate' in navigator) navigator.vibrate([100,50,120]);
-    // pulse countdown
     let pulses = 0;
     const pulseI = setInterval(()=> {
       countdownBox.style.transform = 'scale(1.03)';
@@ -355,7 +409,7 @@
     }, 500);
   }
 
-  // resize confetti canvas when visible
+  // responsive: resize confetti canvas if visible
   window.addEventListener('resize', ()=> {
     if(confettiCanvas.style.display !== 'none'){
       confettiCanvas.width = window.innerWidth * devicePixelRatio;
@@ -363,18 +417,6 @@
       confettiCanvas.style.width = window.innerWidth + 'px';
       confettiCanvas.style.height = window.innerHeight + 'px';
       confettiCanvas.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
-    }
-  });
-
-  // ---------- initialization on load ----------
-  window.addEventListener('load', ()=> {
-    // reveal main content (we removed overlay)
-    document.getElementById('main').style.opacity = '1';
-    // start ambient petals
-    spawnAmbientPetalsLoop();
-    // if already past event time, trigger celebration
-    if(new Date() >= eventDate){
-      triggerCelebration();
     }
   });
 
